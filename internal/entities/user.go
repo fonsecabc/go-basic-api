@@ -3,15 +3,15 @@ package entities
 import (
 	"net/mail"
 
-	"github.com/fonsecabc/go-basic-api/pkg/entities"
 	"github.com/fonsecabc/go-basic-api/pkg/errors"
+	"github.com/fonsecabc/go-basic-api/pkg/value_objects"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
-	ID       entities.ID `json:"id"`
-	Email    string      `json:"email"`
-	Password string      `json:"-"`
+	ID       value_objects.ID `json:"id"`
+	Email    string           `json:"email"`
+	Password string           `json:"-"`
 }
 
 func NewUser(email, password string) (*User, error) {
@@ -21,7 +21,7 @@ func NewUser(email, password string) (*User, error) {
 	}
 
 	u := &User{
-		ID:       entities.NewID(),
+		ID:       value_objects.NewID(),
 		Email:    email,
 		Password: string(hash),
 	}
@@ -46,7 +46,7 @@ func (u *User) ValidateUser() error {
 		return errors.NewMissingParamError("id")
 	}
 
-	if _, err := entities.ParseID(u.ID.String()); err != nil {
+	if _, err := value_objects.ParseID(u.ID.String()); err != nil {
 		return errors.NewInvalidParamError("id")
 	}
 
