@@ -3,11 +3,12 @@ package entities
 import (
 	"testing"
 
+	"github.com/fonsecabc/go-basic-api/pkg/value_objects"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewProduct(t *testing.T) {
-	p, err := NewProduct("test", 10.0)
+	p, err := NewProduct("test", 10.0, value_objects.NewID())
 
 	assert.Nil(t, err)
 	assert.NotNil(t, p)
@@ -17,20 +18,20 @@ func TestNewProduct(t *testing.T) {
 	assert.NotEmpty(t, p.CreatedAt)
 
 	assert.Equal(t, "test", p.Name)
-	assert.NotEqual(t, 10.0, p.Price)
+	assert.Equal(t, float32(10.0), p.Price)
 
-	// Testing invalid products
 	tests := []struct {
-		name  string
-		price float32
+		name   string
+		price  float32
+		userID value_objects.ID
 	}{
-		{"", 0},
-		{"test", -1},
-		{"test", 0},
+		{"", 0, value_objects.NewID()},
+		{"test", -1, value_objects.NewID()},
+		{"test", 0, value_objects.NewID()},
 	}
 
 	for _, test := range tests {
-		p, err := NewProduct(test.name, test.price)
+		p, err := NewProduct(test.name, test.price, test.userID)
 		assert.NotNil(t, err)
 		assert.Nil(t, p)
 	}

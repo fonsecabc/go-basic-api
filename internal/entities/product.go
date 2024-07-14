@@ -3,22 +3,25 @@ package entities
 import (
 	"time"
 
-	"github.com/fonsecabc/go-basic-api/pkg/entities"
 	"github.com/fonsecabc/go-basic-api/pkg/errors"
+	"github.com/fonsecabc/go-basic-api/pkg/validations"
+	"github.com/fonsecabc/go-basic-api/pkg/value_objects"
 )
 
 type Product struct {
-	ID        entities.ID `json:"id"`
-	Name      string      `json:"name"`
-	Price     float32     `json:"price"`
-	CreatedAt time.Time   `json:"created_at"`
+	ID        value_objects.ID `json:"id"`
+	Name      string           `json:"name"`
+	Price     float32          `json:"price"`
+	UserID    value_objects.ID `json:"user_id"`
+	CreatedAt time.Time        `json:"created_at"`
 }
 
-func NewProduct(name string, price float32) (*Product, error) {
+func NewProduct(name string, price float32, userID value_objects.ID) (*Product, error) {
 	p := &Product{
-		ID:        entities.NewID(),
+		ID:        value_objects.NewID(),
 		Name:      name,
 		Price:     price,
+		UserID:    userID,
 		CreatedAt: time.Now(),
 	}
 
@@ -42,12 +45,12 @@ func (u *Product) ValidateProduct() error {
 		return errors.NewInvalidParamError("price")
 	}
 
-	if u.ID.String() == "" {
-		return errors.NewMissingParamError("id")
+	if err := validations.ValidateID(u.ID); err != nil {
+		return err
 	}
 
-	if _, err := entities.ParseID(u.ID.String()); err != nil {
-		return errors.NewInvalidParamError("id")
+	if err := validations.ValidateID(u.UserID); err != nil {
+		return err
 	}
 
 	return nil

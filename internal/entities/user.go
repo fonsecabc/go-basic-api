@@ -4,6 +4,7 @@ import (
 	"net/mail"
 
 	"github.com/fonsecabc/go-basic-api/pkg/errors"
+	"github.com/fonsecabc/go-basic-api/pkg/validations"
 	"github.com/fonsecabc/go-basic-api/pkg/value_objects"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -42,12 +43,8 @@ func (u *User) ValidateUser() error {
 		return errors.NewInvalidParamError("password")
 	}
 
-	if u.ID.String() == "" {
-		return errors.NewMissingParamError("id")
-	}
-
-	if _, err := value_objects.ParseID(u.ID.String()); err != nil {
-		return errors.NewInvalidParamError("id")
+	if err := validations.ValidateID(u.ID); err != nil {
+		return err
 	}
 
 	return nil
